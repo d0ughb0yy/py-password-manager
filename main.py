@@ -1,8 +1,5 @@
 import argparse
-
-from crypto import encrypt, decrypt
-
-user_accounts = {}
+from db import encrypt, decrypt, UserAccount, iv, view_entry, insert_into_db, setup_db
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--function", help="Function to perform add or view", required=True)
@@ -16,14 +13,18 @@ acc_name_input = args.name
 acc_username_input = args.username
 acc_pass_input = args.password
 
-# Assign user input to the user dictionary
-user_accounts[acc_name_input] = [acc_username_input, acc_pass_input]
+# Initiate a UserAccount class with arguments
+user = UserAccount(acc_name_input, acc_username_input, acc_pass_input, iv=iv)
+setup_db()
 
-# Application logic for --function argument
-if args.function == "view":
-    try:
-        print(decrypt(acc_name_input))
-    except Exception as e:
-        print(f"Error during decryption: {e}")
-elif args.function == "add":
-    encrypt(user_accounts, acc_name_input)
+if __name__ == '__main__':
+    # Application logic for --function argument
+    if args.function == "view":
+        try:
+            user = view_entry(acc_name_input)
+        except Exception as e:
+            print(f"{e}")
+    elif args.function == "add":
+        encrypted_user = encrypt(user)
+        insert_into_db(encrypted_user)
+    
