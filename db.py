@@ -1,6 +1,4 @@
 import sqlite3
-
-import Crypto.Random
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util.Padding import pad, unpad
@@ -29,7 +27,7 @@ cipher = AES.new(key, mode)
 iv = cipher.iv
 
 
-def setup_db():
+def check_for_db():
     if os.path.exists("accounts.db"):
         pass
     else:
@@ -82,28 +80,38 @@ def decrypt(enc_user_object):
     return UserAccount(enc_user_object.name, user_em, user_pass, enc_user_object.iv)
 
 def insert_into_db(enc_user_object):
-    connection = sqlite3.connect("accounts.db")
-    db_con = connection.cursor()
-    db_con.execute("INSERT INTO accounts VALUES(?, ?, ?, ?)",
-                   (enc_user_object.name, enc_user_object.email, enc_user_object.password, enc_user_object.iv))
-    connection.commit()
-    connection.close()
+        # Create an accounts.db file if it's not created and initialize the accounts table inside
+        check_for_db()
+        connection = sqlite3.connect("accounts.db")
+        db_con = connection.cursor()
+        db_con.execute("INSERT INTO accounts VALUES(?, ?, ?, ?)",
+                       (enc_user_object.name, enc_user_object.email, enc_user_object.password, enc_user_object.iv))
+        connection.commit()
+        connection.close()
+
 
 
 def view_entry(acc_name_input):
-    # Connect
-    view_conn = sqlite3.connect("accounts.db")
-    vc = view_conn.cursor()
-    # Execute SELECT statement
-    vc.execute("SELECT * FROM accounts WHERE name=?", (acc_name_input,))
-    view_conn.commit()
 
-    # Store everything in a db_dump variable
-    db_dump = vc.fetchall()
-    for tuple in db_dump:
-        user_tuple = tuple
-        encrypted_user = UserAccount(user_tuple[0], user_tuple[1], user_tuple[2], user_tuple[3])
-        decrypted_user = decrypt(encrypted_user)
-        view_conn.close()
-        print(f"""Account: {decrypted_user.name}\nEmail: {decrypted_user.email}\nPassword: {decrypted_user.password}""")
-        print("=========================")
+    if os.path.exists("accounts.db"):
+        # Connect
+        view_conn = sqlite3.connect("accounts.db")
+        vc = view_conn.cursor()
+
+        # Execute SELECT statement
+        vc.execute("SELECT * FROM accounts WHERE name=?", (acc_name_input,))
+        view_conn.commit()
+
+        # Store everything in a db_dump variable
+        db_dump = vc.fetchall()
+        # Iterate through the list of tuples
+        for tuple in db_dump:
+            user_tuple = tuple
+            # Extracts the values from every tuple to and stores them into a UserAccount class
+            encrypted_user = UserAccount(user_tuple[0], user_tuple[1], user_tuple[2], user_tuple[3])
+            decrypted_user = decrypt(encrypted_user)
+            view_conn.close()
+            print(f"""Account: {decrypted_user.name}\nEmail: {decrypted_user.email}\nPassword: {decrypted_user.password}""")
+            print("=========================")
+    else:
+        print("Accounts file is missing run --add first")
