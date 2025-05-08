@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Load Environmental Variables
 load_dotenv()
 
-SALT = b'\x19\xb6\x9ec0Xu\x9fghz\x08\xc4\xc4$@]\xd2B\xc9|wk\x1a\xb1\xc9\xbb"1\x1f\x8a\xd3'
+SALT = os.getenv("SALT")
 MASTER = os.getenv("MASTER_PASS")
 
 key = PBKDF2(MASTER, SALT, dkLen=32)
@@ -28,6 +28,8 @@ iv = cipher.iv
 
 
 def check_for_db():
+    '''Checks for presence of accounts.db file in the working directory,
+        if the file is not present it creates it and initializes columns'''
     if os.path.exists("accounts.db"):
         pass
     else:
@@ -46,7 +48,7 @@ def encrypt(user_object):
     """Takes a UserAccount class and encodes the email and password
         and returns a new UserAccount class with the encrypted email and password values"""
 
-    # Take the plain-text info and first base64 encoded and turn into bytes
+    # Take the plain-text info and first base64 encode it and turn into bytes
     user_email_b64 = base64.b64encode(user_object.email.encode())
     user_password_b64 = base64.b64encode(user_object.password.encode())
 
@@ -114,4 +116,5 @@ def view_entry(acc_name_input):
             print(f"""Account: {decrypted_user.name}\nEmail: {decrypted_user.email}\nPassword: {decrypted_user.password}""")
             print("=========================")
     else:
-        print("Accounts file is missing run --add first")
+        print("Accounts file is missing.")
+        print("Add an entry with --add first")
