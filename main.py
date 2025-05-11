@@ -1,6 +1,7 @@
 import argparse
 
-from db import encrypt, UserAccount, iv, view_entry, insert_into_db
+from db import view_entry, insert_into_db
+from crypto import UserAccount, encrypt, IV
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--function", help="Function to perform add or view", required=True)
@@ -15,7 +16,7 @@ acc_username_input = args.username
 acc_pass_input = args.password
 
 # Initiate a UserAccount class with arguments
-user = UserAccount(acc_name_input, acc_username_input, acc_pass_input, iv=iv)
+user = UserAccount(acc_name_input, acc_username_input, acc_pass_input, iv=IV)
 
 if __name__ == '__main__':
     # Application logic for --function argument
