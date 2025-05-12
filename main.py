@@ -3,11 +3,18 @@ import argparse
 from db import view_entry, insert_into_db
 from crypto import UserAccount, encrypt, IV
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--function", help="Function to perform add or view", required=True)
-parser.add_argument("-n", "--name", help="Name of the account", required=True)
-parser.add_argument("-u", "--username", help="Username used in the account")
-parser.add_argument("-p", "--password", help="Password for the account")
+parser = argparse.ArgumentParser(
+    prog="pyPass Password Manager",
+    usage='python3 pypass.py [-f (add | view) -n Google -u john@gmail.com -p Password123]',
+    description='Password manager that stores your encrypted data in a sqlite local file')
+parser.add_argument("-f", "--function",
+                    help="Function to perform add or view",
+                    required=True,
+                    type=str,
+                    choices=['add', 'view'])
+parser.add_argument("-n", "--name", help="Name of the account", required=True, type=str)
+parser.add_argument("-u", "--username", help="Username used in the account", type=str)
+parser.add_argument("-p", "--password", help="Password for the account", type=str)
 args = parser.parse_args()
 
 # Get account information from the command line arguments
