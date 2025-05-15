@@ -20,6 +20,8 @@ def check_for_db():
         conn.commit()
 
 def insert_into_db(enc_user_object):
+        """Checks if the local storage exists if not it creates it,
+        it takes the encrypted UserAccount object and stores it in a db file"""
         # Create an accounts.db file if it's not created and initialize the accounts table inside
         check_for_db()
         connection = sqlite3.connect("accounts.db")
@@ -30,7 +32,8 @@ def insert_into_db(enc_user_object):
         connection.close()
 
 def view_entry(acc_name_input):
-
+    """Checks for the name of the service from acc_name_input in the local storage,
+    if it exists it decrypts the content and prints out the user account info"""
     if os.path.exists("accounts.db"):
         # Connect
         view_conn = sqlite3.connect("accounts.db")
