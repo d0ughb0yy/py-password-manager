@@ -27,5 +27,3 @@ Add an entry to the database:\
 
 Query for account names:\
 `python3 pypass.py -f view -n Google`
-
-## Details
