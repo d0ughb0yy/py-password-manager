@@ -11,15 +11,6 @@ encryption and SQLite for local storage.
 * SQLite database for storing account names, usernames and encrypted passwords
 * Create entries and view entries from the command line
 
-### Libraries used
-
-* pycryptodome
-* sqlite3
-* base64
-* os
-* argparse
-* dotenv
-
 ## Usage
 
 Add an entry to the database:\
@@ -27,3 +18,7 @@ Add an entry to the database:\
 
 Query for account names:\
 `python3 pypass.py -f view -n Google`
+
+## To-Do
+* Add delete function to delete entries by email
+* Add view by email function
